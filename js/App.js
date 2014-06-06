@@ -1,6 +1,7 @@
 Ext.define('CustomApp', {
     extend: 'Rally.app.App',
     componentCls: 'app',
+    padding: '20 20 20 20',
     items: [
     ],
     
