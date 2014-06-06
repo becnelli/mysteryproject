@@ -58,7 +58,7 @@ Ext.define('MyApp.App', {
                     value: '0'
                 }
             ],
-            fetch: true
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
         });
     },
     
@@ -75,7 +75,8 @@ Ext.define('MyApp.App', {
             showRowActionsColumn: false,
             editable: false,
             store: Ext.create('Rally.data.custom.Store', {
-                data: records
+                data: records,
+                sorters: [{property: 'Bang', direction: 'DESC'}]
             }),
             columnCfgs: [
                 {
@@ -92,11 +93,11 @@ Ext.define('MyApp.App', {
                 },
                 {
                     text: 'Plan Estimate',
-                    dataIndex: 'Plan Estimate'
+                    dataIndex: 'PlanEstimate'
                 },
                 {
                     text: 'Business Value',
-                    dataIndex: 'Business Value'
+                    dataIndex: 'c_BusinessValue'
                 },
                 {
                     text: 'Bang',
