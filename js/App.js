@@ -1,4 +1,5 @@
-Ext.define('CustomApp', {
+Ext.define('MyApp.App', {
+    requires: ['MyApp.Toggle'],
     extend: 'Rally.app.App',
     componentCls: 'app',
     padding: '20 20 20 20',
@@ -7,15 +8,22 @@ Ext.define('CustomApp', {
     padding: '20 20 20 20',
     
     launch: function() {
-        this._addBoard();
+        this._addToggle();
+        this._addBoard('PlanEstimate');
     },
-
-    _addBoard: function() {
+    
+    _addToggle: function(){
+        this.add({
+            xtype: 'customtoggle'
+        });
+    },
+    
+    _addBoard: function(attribute) {
         var columns = [
             {
                 value: null,
                 columnHeaderConfig: {
-                    headerData: {planEstimate: 'Unestimated'}
+                    headerData: {value: 'Unestimated'}
                 }
             }
         ];
@@ -26,7 +34,7 @@ Ext.define('CustomApp', {
             columns.push({
                 value: estimate,
                 columnHeaderConfig: {
-                    headerData: {planEstimate: estimate}
+                    headerData: {value: estimate}
                 }
             });
         });
@@ -34,11 +42,11 @@ Ext.define('CustomApp', {
         this.board = this.add({
             xtype: 'rallycardboard',
             types: ['User Story'],
-            attribute: 'PlanEstimate',
+            attribute: attribute,
             context: this.getContext(),
             columnConfig: {
                 columnHeaderConfig: {
-                    headerTpl: '{planEstimate}'
+                    headerTpl: '{value}'
                 }
             },
             storeConfig: {

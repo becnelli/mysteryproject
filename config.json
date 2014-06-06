@@ -3,7 +3,8 @@
     "className": "CustomApp",
     "sdk": "2.0p",
     "javascript": [
-        "js/App.js"
+        "js/App.js",
+        "js/Toggle.js"
     ],
     "css": [
         "stylesheets/app.css"

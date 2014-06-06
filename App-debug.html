@@ -6,12 +6,14 @@
       <script type="text/javascript" src="https://rally1.rallydev.com/apps/2.0rc3/sdk-debug.js"></script>
  
     <script type="text/javascript">
-    
+
+Ext.Loader.setPath('MyApp', 'js');    
+
         Rally.onReady(function() {
             Rally.loadScripts([
                 "js/App.js"
             ], function() {
-                Rally.launchApp('CustomApp', {
+                Rally.launchApp('MyApp.App', {
                 })
             });
         });
