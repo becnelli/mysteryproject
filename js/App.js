@@ -7,21 +7,7 @@ Ext.define('CustomApp', {
     padding: '20 20 20 20',
     
     launch: function() {
-        Ext.create('Rally.data.wsapi.Store', {
-            model: 'User',
-            autoLoad: true,
-            filters: [
-                {
-                    property: 'TeamMemberships',
-                    operator: 'contains',
-                    value: Rally.util.Ref.getRelativeUri(this.getContext().getProject())
-                }
-            ],
-            listeners: {
-                load: this._addBoard,
-                scope: this
-            }
-        }); 
+        this._addBoard();
     },
 
     _addBoard: function() {
@@ -45,7 +31,7 @@ Ext.define('CustomApp', {
             });
         });
         
-        this.add({
+        this.board = this.add({
             xtype: 'rallycardboard',
             types: ['User Story'],
             attribute: 'PlanEstimate',
