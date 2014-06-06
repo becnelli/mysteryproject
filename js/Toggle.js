@@ -6,36 +6,38 @@
         extend:'Ext.Container',
         alias:'widget.customtoggle',
 
-        componentCls: 'rui-gridboard-toggle toggle-button-group',
+        componentCls: '',
         layout: 'hbox',
         border: 1,
         activeButtonCls: 'active hide-tooltip',
 
-        toggleState: 'grid',
+        toggleState: 'PlanEstimate',
 
         defaultType: 'rallybutton',
         items: [
             {
-                itemId: 'board',
-                cls: 'toggle board left',
-                iconCls: 'icon-board',
+                cls: 'toggle left',
+                itemId: 'PlanEstimate',
+                text: 'Plan Estimate',
                 frame: false,
                 toolTipConfig: {
                     html: 'Switch to Plan Estimates',
                     anchor: 'bottom',
                     hideDelay: 0
-                }
+                },
+                width: 200
             },
             {
-                itemId: 'grid',
-                cls: 'toggle grid right',
-                iconCls: 'icon-grid',
+                cls: 'toggle right',
+                itemId: 'BusinessValue',
+                text: 'Business Value',
                 frame: false,
                 toolTipConfig: {
                     html: 'Switch to Business Value',
                     anchor: 'bottom',
                     hideDelay: 0
-                }
+                },
+                width: 200
             }
         ],
 
@@ -46,7 +48,7 @@
                 /**
                  * @event toggle
                  * Fires when the toggle value is changed.
-                 * @param {String} toggleState 'grid' or 'board'.
+                 * @param {String} toggleState 'BusinessValue' or 'PlanEstimate'.
                  */
                 'toggle'
             ]);

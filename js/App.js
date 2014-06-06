@@ -14,8 +14,17 @@ Ext.define('MyApp.App', {
     
     _addToggle: function(){
         this.add({
-            xtype: 'customtoggle'
+            xtype: 'customtoggle',
+            listeners: {
+                toggle: {fn: this._boardToggled, scope: this}
+            }
         });
+    },
+    
+    _boardToggled: function(sender, attribute){
+        this.remove(this.board);
+        
+        this._addBoard(attribute);
     },
     
     _addBoard: function(attribute) {
@@ -44,6 +53,7 @@ Ext.define('MyApp.App', {
             types: ['User Story'],
             attribute: attribute,
             context: this.getContext(),
+            margin: '20 0 0 0',
             columnConfig: {
                 columnHeaderConfig: {
                     headerTpl: '{value}'

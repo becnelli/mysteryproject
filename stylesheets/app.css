@@ -63,7 +63,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
-/* line 3, ../sass/app.scss */
-.app {
-  /* Add app styles here */
+/* line 5, ../sass/app.scss */
+.app .x-btn-default-small .x-btn-inner {
+  color: black;
+}
+/* line 11, ../sass/app.scss */
+.app .active.x-btn-default-small .x-btn-inner {
+  color: white;
 }

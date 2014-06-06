@@ -1,6 +1,16 @@
 @import "compass/reset";
 
 .app {
-     /* Add app styles here */
+    .x-btn-default-small {
+        .x-btn-inner {
+            color: black;
+        }
+    }
+    
+    .active.x-btn-default-small {
+        .x-btn-inner {
+            color: white;
+        }
+    }
 }
 
