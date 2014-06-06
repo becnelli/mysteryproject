@@ -3,6 +3,7 @@ Ext.define('CustomApp', {
     componentCls: 'app',
     items: [
     ],
+    padding: '20 20 20 20',
     
     launch: function() {
         Ext.create('Rally.data.wsapi.Store', {
@@ -16,45 +17,44 @@ Ext.define('CustomApp', {
                 }
             ],
             listeners: {
-                load: this._onTeamMembersLoaded,
+                load: this._addBoard,
                 scope: this
             }
         }); 
     },
 
-    _onTeamMembersLoaded: function(store, records) {
+    _addBoard: function() {
         var columns = [
             {
                 value: null,
                 columnHeaderConfig: {
-                    headerData: {owner: 'No Owner'}
+                    headerData: {planEstimate: 'Unestimated'}
                 }
             }
         ];
+        
+        var estimateValues = [0, 1, 2, 3, 5, 8, 13, 20];
 
-        _.each(records, function(record) {
+        _.each(estimateValues, function(estimate) {
             columns.push({
-                value: record.getRef().getRelativeUri(),
+                value: estimate,
                 columnHeaderConfig: {
-                    headerData: {owner: record.get('_refObjectName')}
+                    headerData: {planEstimate: estimate}
                 }
             });
         });
-
-        this._addBoard(columns);
-    },
-
-    _addBoard: function(columns) {
+        
         this.add({
             xtype: 'rallycardboard',
             types: ['User Story'],
-            attribute: 'Owner',
+            attribute: 'PlanEstimate',
             context: this.getContext(),
             columnConfig: {
                 columnHeaderConfig: {
-                    headerTpl: '{owner}'
+                    headerTpl: '{planEstimate}'
                 }
             },
+          
             columns: columns
         });
     }
