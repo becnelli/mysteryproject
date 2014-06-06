@@ -55,6 +55,15 @@ Ext.define('CustomApp', {
                     headerTpl: '{planEstimate}'
                 }
             },
+            storeConfig: {
+                filters: [
+                    {
+                        property: 'Iteration',
+                        operation: '=',
+                        value: ''
+                    }
+                ]
+            },
           
             columns: columns
         });
