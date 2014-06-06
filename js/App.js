@@ -61,6 +61,11 @@ Ext.define('CustomApp', {
                         property: 'Iteration',
                         operation: '=',
                         value: ''
+                    },
+                    {
+                        property: 'DirectChildrenCount',
+                        operation: '=',
+                        value: '0'
                     }
                 ]
             },
