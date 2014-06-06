@@ -45,7 +45,7 @@
                 text: 'Ranking',
                 frame: false,
                 toolTipConfig: {
-                    html: 'Show Ranking',
+                    html: 'Switch to Ranking',
                     anchor: 'bottom',
                     hideDelay: 0
                 },
