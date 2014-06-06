@@ -28,12 +28,24 @@
                 width: 200
             },
             {
-                cls: 'toggle right',
+                cls: 'toggle center',
                 itemId: 'BusinessValue',
                 text: 'Business Value',
                 frame: false,
                 toolTipConfig: {
                     html: 'Switch to Business Value',
+                    anchor: 'bottom',
+                    hideDelay: 0
+                },
+                width: 200
+            },
+            {
+                cls: 'toggle right',
+                itemId: 'Ranking',
+                text: 'Ranking',
+                frame: false,
+                toolTipConfig: {
+                    html: 'Show Ranking',
                     anchor: 'bottom',
                     hideDelay: 0
                 },

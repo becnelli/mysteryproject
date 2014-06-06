@@ -24,7 +24,9 @@ Ext.define('MyApp.App', {
     _boardToggled: function(sender, attribute){
         this.remove(this.board);
         
-        this._addBoard(attribute);
+        if(attribute != 'Ranking') {
+            this._addBoard(attribute);
+        }
     },
     
     _addBoard: function(attribute) {
@@ -54,6 +56,9 @@ Ext.define('MyApp.App', {
             attribute: attribute,
             context: this.getContext(),
             margin: '20 0 0 0',
+            listeners: {
+              load: function(){Ext.resumeLayouts(true);}  
+            },
             columnConfig: {
                 columnHeaderConfig: {
                     headerTpl: '{value}'

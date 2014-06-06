@@ -71,3 +71,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 .app .active.x-btn-default-small .x-btn-inner {
   color: white;
 }
+/* line 16, ../sass/app.scss */
+.app .x-btn.toggle.center {
+  border: solid 1px silver !important;
+}
