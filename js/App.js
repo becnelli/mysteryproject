@@ -39,7 +39,7 @@ Ext.define('MyApp.App', {
     },
 
     _addHeader: function () {
-        this.header = this.add({xtype: 'component', tpl: '<div class="headerContainer"><tpl if="img"><img src={img} height="40"/></tpl><h1>{text}</h1></div>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
+        this.header = this.add({xtype: 'component', tpl: '<div class="headerContainer"><tpl if="img"><img src={img} width="40" height="40"/></tpl><h1>{text}</h1></div>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
     },
     
     _addRankingGrid: function() {
@@ -118,8 +118,8 @@ Ext.define('MyApp.App', {
             ]
         });
     },
-    _addBoard: function (attribute) {
-        var text = attribute === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stores";
+    _addBoard: function () {
+        var text = this.attributeName === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stories";
         this.header.update({text: text});
         
         Ext.create('Rally.data.wsapi.Store', {
@@ -145,7 +145,15 @@ Ext.define('MyApp.App', {
         });
     },
         
-    _onBoardDataLoaded: function(store, data) {
+    _onBoardDataLoaded: function(store, data) { 
+        var valueAttributes = _.map(data, function(record) { return record.get(this.attributeName); }, this);
+        var uniqueValues = _.uniq(valueAttributes);
+        var uniqueValuesNoNull = _.filter(uniqueValues, function(value) { return value != null; });
+        
+        var unorderedColumns = _.union([0, 1, 2, 3, 5, 8, 13, 20], uniqueValuesNoNull);
+        
+        var estimateValues = _.sortBy(unorderedColumns, function(num) { return num; });
+        
     
         var columns = [
             {
@@ -156,7 +164,6 @@ Ext.define('MyApp.App', {
             }
         ];
 
-        var estimateValues = [0, 1, 2, 3, 5, 8, 13, 20];
 
         _.each(estimateValues, function (estimate) {
             columns.push({
