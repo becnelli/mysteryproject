@@ -9,11 +9,13 @@ Ext.define('MyApp.App', {
     ],
     padding: '20 20 20 20',
     launch: function () {
+        this.attributeName = 'PlanEstimate';
         this._addHeader();
         this._addToggle();
-        this.attributeName = 'PlanEstimate';
+        this._addBangButton();
         this._addBoard();
     },
+    
     _addToggle: function () {
         var container = this.add({
             xtype: 'container',
@@ -30,10 +32,57 @@ Ext.define('MyApp.App', {
             ]
         });
     },
+    
+    _addBangButton: function() {
+        this.bangButtonContainer = this.add({xtype: 'container',
+            layout: {type: 'hbox', pack: 'end'},
+            items: [
+                {
+                    xtype: 'rallybutton',
+                    text: 'Rank Stories By Bang',
+                    handler: this._rankByBang,
+                    margin: '0 0 10 0',
+                    scope: this
+                }
+            ]
+        });
+        
+        this.bangButtonContainer.hide();
+    },
+    
+    _rankByBang: function(){
+        this.storyToRankMap = {};
+        
+        this.sortedData = _.sortBy(this.gridData, 'Bang');
+        
+        this.iRank = 0;
+        this._rankRelative();
+    },
+    
+    _rankRelative: function() {
+        if(this.iRank < this.sortedData.length -1)
+        {
+            var i = this.iRank;
+            this.iRank++;
+            
+            Rally.data.Ranker.rankRelative({
+                recordToRank: this.wsapiMap[this.sortedData[i+1].ObjectID],
+                relativeRecord: this.wsapiMap[this.sortedData[i].ObjectID],
+                position: 'before',
+                notificationMessage: 'Moved {0} above {1}',
+                saveOptions: {
+                    callback: this._rankRelative,
+                    scope:this
+                }
+            });
+        }
+    },
+    
     _boardToggled: function (sender, attribute) {
         this.remove(this.board);
         this.remove(this.grid);
         this.remove(this.message);
+        this.bangButtonContainer.hide();
         this.attributeName = attribute;
         
         if(this.attributeName != 'Ranking') {
@@ -49,6 +98,7 @@ Ext.define('MyApp.App', {
     },
     
     _addRankingGrid: function() {
+        this.bangButtonContainer.show();
         this.header.update({img: 'img/bang.jpg', text: 'Story Value per Cost'});
 
         Ext.create('Rally.data.wsapi.Store', {
@@ -75,16 +125,19 @@ Ext.define('MyApp.App', {
                     value: '0'
                 }
             ],
-            fetch: ['FormattedID', 'Name', 'PlanEstimate', MyApp.App.BUSINESS_VALUE_PROPERTY]
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', MyApp.App.BUSINESS_VALUE_PROPERTY, 'DragAndDropRank']
         });
     },
 
     _onGridDataLoaded: function (store, data) {
-        var records = _.map(data, function (record) {
+        this.wsapiMap = {};
+        
+        this.gridData = _.map(data, function (record) {
+            this.wsapiMap[record.get('ObjectID')] = record;
             return Ext.apply({
                 Bang: (record.get(MyApp.App.BUSINESS_VALUE_PROPERTY) / record.get('PlanEstimate')).toFixed(2)
             }, record.getData());
-        });
+        }, this);
 
         this.grid = this.add({
             xtype: 'rallygrid',
@@ -92,7 +145,7 @@ Ext.define('MyApp.App', {
             showRowActionsColumn: false,
             editable: false,
             store: Ext.create('Rally.data.custom.Store', {
-                data: records,
+                data: this.gridData,
                 sorters: [
                     {property: 'Bang', direction: 'DESC'}
                 ]
@@ -154,7 +207,7 @@ Ext.define('MyApp.App', {
     },
     
     _onBoardDataLoaded: function(store, data) { 
-        var definedColumns = [0, 1, 2, 3, 5, 8, 13, 20];
+        var definedColumns = [1, 2, 3, 5, 8, 13, 20];
         
         var valueAttributes = _.map(data, function(record) { return record.get(this.attributeName); }, this);
         
@@ -209,7 +262,7 @@ Ext.define('MyApp.App', {
             margin: '10 0 0 0',
             columnConfig: {
                 columnHeaderConfig: {
-                    headerTpl: '{value}'
+                        headerTpl: '{value}'
                 }
             },
             storeConfig: {
@@ -232,6 +285,12 @@ Ext.define('MyApp.App', {
         }
     },
     _supportsBusinessValue: function(data){
-       return data.length > 0 && _.has(data[0].data, MyApp.App.BUSINESS_VALUE_PROPERTY);
+        if(!_.isUndefined(this.valueUnsupported)){
+            return this.valueUnsupported;
+        }
+        else{
+            this.valueUnsupported = data.length > 0 && _.has(data[0].data, MyApp.App.BUSINESS_VALUE_PROPERTY);
+            return this.valueUnsupported;
+        }
     }
 });
