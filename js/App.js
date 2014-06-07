@@ -3,7 +3,7 @@ Ext.define('MyApp.App', {
     extend: 'Rally.app.App',
     componentCls: 'app',
     statics: {
-        BUSINESS_VALUE_PROPERTY: 'awefaefawef'
+        BUSINESS_VALUE_PROPERTY: 'c_BusinessValue'
     },
     items: [
     ],
