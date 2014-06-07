@@ -118,6 +118,7 @@ Ext.define('MyApp.App', {
             ]
         });
     },
+    
     _addBoard: function () {
         var text = this.attributeName === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stories";
         this.header.update({text: text});
@@ -144,17 +145,20 @@ Ext.define('MyApp.App', {
             fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
         });
     },
-        
+    
     _onBoardDataLoaded: function(store, data) { 
+        var definedColumns = [0, 1, 2, 3, 5, 8, 13, 20];
+        
         var valueAttributes = _.map(data, function(record) { return record.get(this.attributeName); }, this);
+        
         var uniqueValues = _.uniq(valueAttributes);
+        
         var uniqueValuesNoNull = _.filter(uniqueValues, function(value) { return value != null; });
         
-        var unorderedColumns = _.union([0, 1, 2, 3, 5, 8, 13, 20], uniqueValuesNoNull);
+        var unorderedColumns = _.union(definedColumns, uniqueValuesNoNull);
         
         var estimateValues = _.sortBy(unorderedColumns, function(num) { return num; });
-        
-    
+
         var columns = [
             {
                 value: null,
@@ -164,12 +168,21 @@ Ext.define('MyApp.App', {
             }
         ];
 
-
         _.each(estimateValues, function (estimate) {
+            var borderValue = 0;
+            if(!_.contains(definedColumns, estimate)){
+                borderValue = 1;
+            }
+            
             columns.push({
                 value: estimate,
                 columnHeaderConfig: {
                     headerData: {value: estimate}
+                }, 
+                border: borderValue,
+                style: {
+                    borderColor: 'red',
+                    borderStyle: 'solid'
                 }
             });
         });
@@ -199,7 +212,6 @@ Ext.define('MyApp.App', {
                     }
                 ]
             },
-
             columns: columns
         });
     }
