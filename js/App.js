@@ -43,7 +43,7 @@ Ext.define('MyApp.App', {
     },
     
     _addRankingGrid: function() {
-        this.header.update({imgSrc: 'img/bang.jpg', text: 'Story Value per Cost'});
+        this.header.update({img: 'img/bang.jpg', text: 'Story Value per Cost'});
         Ext.create('Rally.data.wsapi.Store', {
             model: 'userstory',
             autoLoad: true,
