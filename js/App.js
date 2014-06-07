@@ -80,14 +80,6 @@ Ext.define('MyApp.App', {
     },
 
     _onGridDataLoaded: function (store, data) {
-        if(!this._supportsBusinessValue(data)){
-            this.message = this.add({
-                xtype:'boarderrormessage',
-                businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY
-            });
-            return;
-        }
-
         var records = _.map(data, function (record) {
             return Ext.apply({
                 Bang: (record.get(MyApp.App.BUSINESS_VALUE_PROPERTY) / record.get('PlanEstimate')).toFixed(2)
@@ -240,12 +232,6 @@ Ext.define('MyApp.App', {
         }
     },
     _supportsBusinessValue: function(data){
-        if(_.isUndefined(this.valueUnsupported)){
-            return this.valueUnsupported;
-        }
-        else{
-            this.valueUnsupported = data.length > 0 && _.has(data[0].data, MyApp.App.BUSINESS_VALUE_PROPERTY);
-            return this.valueUnsupported;
-        }
+       return data.length > 0 && _.has(data[0].data, MyApp.App.BUSINESS_VALUE_PROPERTY);
     }
 });
