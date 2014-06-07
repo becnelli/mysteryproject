@@ -35,13 +35,14 @@ Ext.define('MyApp.App', {
     
     _addBangButton: function() {
         this.bangButtonContainer = this.add({xtype: 'container',
-            layout: {type: 'hbox', pack: 'end'},
+            layout: {type: 'hbox'},
             items: [
                 {
                     xtype: 'rallybutton',
                     text: 'Rank Stories By Bang',
                     handler: this._rankByBang,
                     margin: '0 0 10 0',
+                    cls: 'primary medium',
                     scope: this
                 }
             ]
@@ -69,7 +70,7 @@ Ext.define('MyApp.App', {
                 recordToRank: this.wsapiMap[this.sortedData[i+1].ObjectID],
                 relativeRecord: this.wsapiMap[this.sortedData[i].ObjectID],
                 position: 'before',
-                notificationMessage: 'Moved {0} above {1}',
+                notificationMessage: 'Stories ranked by bang!',
                 saveOptions: {
                     callback: this._rankRelative,
                     scope:this
@@ -94,12 +95,12 @@ Ext.define('MyApp.App', {
     },
 
     _addHeader: function () {
-        this.header = this.add({xtype: 'component', tpl: '<div class="headerContainer"><tpl if="img"><img src={img} width="40" height="40"/></tpl><h1>{text}</h1></div>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
+        this.header = this.add({xtype: 'component', tpl: '<div class="headerContainer"><tpl if="img"><img src={img} width="40" height="40" style="margin-right: 1em"/></tpl><h1>{text}</h1></div>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
     },
 
     _addRankingGrid: function() {
         this.bangButtonContainer.show();
-        this.header.update({img: 'img/bang.jpg', text: 'Story Value per Cost'});
+        this.header.update({img: 'img/bang.jpg', text: 'Value vs. Cost'});
 
         Ext.create('Rally.data.wsapi.Store', {
             model: 'userstory',
@@ -206,7 +207,7 @@ Ext.define('MyApp.App', {
     },
 
     _addBoard: function () {
-        var text = this.attributeName === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stories";
+        var text = this.attributeName === 'PlanEstimate' ? "Plan Estimate" : "Business Value";
         this.header.update({text: text});
 
         Ext.create('Rally.data.wsapi.Store', {
