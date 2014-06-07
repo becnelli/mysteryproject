@@ -1,0 +1,54 @@
+/*
+Syntax error: File to import not found or unreadable: compass/reset.
+              Load path: /Users/stefankendall/projects/AppTemplate/sass
+        on line 1 of app.scss
+
+1: @import "compass/reset";
+2: 
+3: .app {
+4:   .x-btn-default-small {
+5:     .x-btn-inner {
+6:       color: black;
+
+Backtrace:
+app.scss:1
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/import_node.rb:67:in `rescue in import'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/import_node.rb:45:in `import'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/import_node.rb:28:in `imported_file'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/import_node.rb:37:in `css_import?'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:217:in `visit_import'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/base.rb:53:in `map'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:128:in `visit_root'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/visitors/perform.rb:7:in `visit'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/tree/root_node.rb:20:in `render'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/engine.rb:315:in `_render'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/engine.rb:262:in `render'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/plugin/compiler.rb:362:in `update_stylesheet'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/plugin/compiler.rb:203:in `block in update_stylesheets'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/plugin/compiler.rb:201:in `each'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/plugin/compiler.rb:201:in `update_stylesheets'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/plugin.rb:81:in `update_stylesheets'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/exec.rb:443:in `watch_or_update'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/exec.rb:326:in `process_result'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/exec.rb:41:in `parse'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/lib/sass/exec.rb:21:in `parse!'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.19/bin/scss:13:in `<top (required)>'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/bin/scss:23:in `load'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/bin/scss:23:in `<main>'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/bin/ruby_executable_hooks:15:in `eval'
+/Users/stefankendall/.rvm/gems/ruby-2.0.0-p247/bin/ruby_executable_hooks:15:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: File to import not found or unreadable: compass/reset.\A               Load path: /Users/stefankendall/projects/AppTemplate/sass\A         on line 1 of app.scss\A \A 1: @import \"compass/reset\";\A 2: \A 3: .app {\A 4:   .x-btn-default-small {\A 5:     .x-btn-inner {\A 6:       color: black;"; }

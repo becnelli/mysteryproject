@@ -1,26 +1,30 @@
 @import "compass/reset";
 
 .app {
-    .x-btn-default-small {
-        .x-btn-inner {
-            color: black;
-        }
+  .x-btn-default-small {
+    .x-btn-inner {
+      color: black;
     }
-    
-    .active.x-btn-default-small {
-        .x-btn-inner {
-            color: white;
-        }
+  }
+
+  .active.x-btn-default-small {
+    .x-btn-inner {
+      color: white;
     }
-    
-    .x-btn.toggle.center {
-        border: solid 1px silver !important;
-    }
-    
-    h1 {
-        font-size: 3em;
-        text-align:center;
-        line-height: 40px;
-    }
+  }
+
+  .x-btn.toggle.center {
+    border: solid 1px silver !important;
+  }
+
+  h1 {
+    font-size: 3em;
+    line-height: 55px;
+    display:inline-block;
+  }
+
+  .headerContainer {
+     text-align: center;
+  }
 }
 

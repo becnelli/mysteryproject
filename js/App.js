@@ -2,50 +2,46 @@ Ext.define('MyApp.App', {
     requires: ['MyApp.Toggle'],
     extend: 'Rally.app.App',
     componentCls: 'app',
-    padding: '20 20 20 20',
     items: [
     ],
     padding: '20 20 20 20',
-    
-    launch: function() {
+    launch: function () {
         this._addHeader();
         this._addToggle();
         this._addBoard('PlanEstimate');
     },
-    
-    _addToggle: function(){
+    _addToggle: function () {
         var container = this.add({xtype: 'container',
-            layout: {type:'hbox', pack:'end'},
-            items:[
+            layout: {type: 'hbox', pack: 'end'},
+            items: [
                 {
                     xtype: 'customtoggle',
                     listeners: {
                         toggle: {fn: this._boardToggled, scope: this}
-                    },  
+                    },
                     margin: '0 0 10 0'
                 }
-              ]
-            });
+            ]
+        });
     },
-    
-    _boardToggled: function(sender, attribute){
+    _boardToggled: function (sender, attribute) {
         this.remove(this.board);
         this.remove(this.grid);
-        
-        if(attribute != 'Ranking') {
+
+        if (attribute != 'Ranking') {
             this._addBoard(attribute);
         }
         else {
             this._addRankingGrid();
         }
     },
-    
-    _addHeader: function(){
-        this.header = this.add({xtype: 'component', tpl: '<h1>{text}</h1>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
+
+    _addHeader: function () {
+        this.header = this.add({xtype: 'component', tpl: '<div class="headerContainer"><tpl if="img"><img src={img} height="40"/></tpl><h1>{text}</h1></div>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
     },
-    
-    _addRankingGrid: function() {
-        this.header.update({text: 'Story Value per Cost <img src="img/bang.jpg" height="40"/>'});
+
+    _addRankingGrid: function () {
+        this.header.update({img: 'img/bang.jpg', text: 'Story Value per Cost'});
         Ext.create('Rally.data.wsapi.Store', {
             model: 'userstory',
             autoLoad: true,
@@ -73,14 +69,14 @@ Ext.define('MyApp.App', {
             fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
         });
     },
-    
-    _onGridDataLoaded: function(store, data) {
-        var records = _.map(data, function(record) {
+
+    _onGridDataLoaded: function (store, data) {
+        var records = _.map(data, function (record) {
             return Ext.apply({
                 Bang: (record.get('c_BusinessValue') / record.get('PlanEstimate')).toFixed(2)
             }, record.getData());
         });
-    
+
         this.grid = this.add({
             xtype: 'rallygrid',
             showPagingToolbar: false,
@@ -88,7 +84,9 @@ Ext.define('MyApp.App', {
             editable: false,
             store: Ext.create('Rally.data.custom.Store', {
                 data: records,
-                sorters: [{property: 'Bang', direction: 'DESC'}]
+                sorters: [
+                    {property: 'Bang', direction: 'DESC'}
+                ]
             }),
             columnCfgs: [
                 {
@@ -118,9 +116,7 @@ Ext.define('MyApp.App', {
             ]
         });
     },
-    
-    
-    _addBoard: function(attribute) {
+    _addBoard: function (attribute) {
         var text = attribute === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stores";
         this.header.update({text: text});
         var columns = [
@@ -131,10 +127,10 @@ Ext.define('MyApp.App', {
                 }
             }
         ];
-        
+
         var estimateValues = [0, 1, 2, 3, 5, 8, 13, 20];
 
-        _.each(estimateValues, function(estimate) {
+        _.each(estimateValues, function (estimate) {
             columns.push({
                 value: estimate,
                 columnHeaderConfig: {
@@ -142,16 +138,13 @@ Ext.define('MyApp.App', {
                 }
             });
         });
-        
+
         this.board = this.add({
             xtype: 'rallycardboard',
             types: ['User Story'],
             attribute: attribute,
             context: this.getContext(),
             margin: '10 0 0 0',
-            listeners: {
-              load: function(){Ext.resumeLayouts(true);}  
-            },
             columnConfig: {
                 columnHeaderConfig: {
                     headerTpl: '{value}'
@@ -171,7 +164,7 @@ Ext.define('MyApp.App', {
                     }
                 ]
             },
-          
+
             columns: columns
         });
     }
