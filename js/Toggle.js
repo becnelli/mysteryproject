@@ -5,7 +5,9 @@
         requires:['Rally.ui.Button'],
         extend:'Ext.Container',
         alias:'widget.customtoggle',
-
+        config: {
+            businessValueProperty: ''
+        },
         componentCls: '',
         layout: 'hbox',
         border: 1,
@@ -14,47 +16,47 @@
         toggleState: 'PlanEstimate',
 
         defaultType: 'rallybutton',
-        items: [
-            {
-                cls: 'toggle left',
-                itemId: 'PlanEstimate',
-                text: 'Plan Estimate',
-                frame: false,
-                toolTipConfig: {
-                    html: 'Switch to Plan Estimates',
-                    anchor: 'bottom',
-                    hideDelay: 0
-                },
-                width: 200
-            },
-            {
-                cls: 'toggle center',
-                itemId: 'c_BusinessValue',
-                text: 'Business Value',
-                frame: false,
-                toolTipConfig: {
-                    html: 'Switch to Business Value',
-                    anchor: 'bottom',
-                    hideDelay: 0
-                },
-                width: 200
-            },
-            {
-                cls: 'toggle right',
-                itemId: 'Ranking',
-                text: 'Ranking',
-                frame: false,
-                toolTipConfig: {
-                    html: 'Switch to Ranking',
-                    anchor: 'bottom',
-                    hideDelay: 0
-                },
-                width: 200
-            }
-        ],
-
         initComponent: function() {
             this.callParent(arguments);
+
+            this.add([
+                {
+                    cls: 'toggle left',
+                    itemId: 'PlanEstimate',
+                    text: 'Plan Estimate',
+                    frame: false,
+                    toolTipConfig: {
+                        html: 'Switch to Plan Estimates',
+                        anchor: 'bottom',
+                        hideDelay: 0
+                    },
+                    width: 200
+                },
+                {
+                    cls: 'toggle center',
+                    itemId: this.getBusinessValueProperty(),
+                    text: 'Business Value',
+                    frame: false,
+                    toolTipConfig: {
+                        html: 'Switch to Business Value',
+                        anchor: 'bottom',
+                        hideDelay: 0
+                    },
+                    width: 200
+                },
+                {
+                    cls: 'toggle right',
+                    itemId: 'Ranking',
+                    text: 'Ranking',
+                    frame: false,
+                    toolTipConfig: {
+                        html: 'Switch to Ranking',
+                        anchor: 'bottom',
+                        hideDelay: 0
+                    },
+                    width: 200
+                }
+            ]);
 
             this.addEvents([
                 /**

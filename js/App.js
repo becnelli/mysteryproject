@@ -1,7 +1,10 @@
 Ext.define('MyApp.App', {
-    requires: ['MyApp.Toggle'],
+    requires: ['MyApp.Toggle', 'MyApp.BoardErrorMessage'],
     extend: 'Rally.app.App',
     componentCls: 'app',
+    statics: {
+        BUSINESS_VALUE_PROPERTY: 'awefaefawef'
+    },
     items: [
     ],
     padding: '20 20 20 20',
@@ -12,11 +15,13 @@ Ext.define('MyApp.App', {
         this._addBoard();
     },
     _addToggle: function () {
-        var container = this.add({xtype: 'container',
+        var container = this.add({
+            xtype: 'container',
             layout: {type: 'hbox', pack: 'end'},
             items: [
                 {
                     xtype: 'customtoggle',
+                    businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY,
                     listeners: {
                         toggle: {fn: this._boardToggled, scope: this}
                     },
@@ -58,7 +63,7 @@ Ext.define('MyApp.App', {
                     value: null
                 },
                 {
-                    property: 'c_BusinessValue',
+                    property: MyApp.App.BUSINESS_VALUE_PROPERTY,
                     operator: '!=',
                     value: null
                 },
@@ -68,14 +73,14 @@ Ext.define('MyApp.App', {
                     value: '0'
                 }
             ],
-            fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', MyApp.App.BUSINESS_VALUE_PROPERTY]
         });
     },
 
     _onGridDataLoaded: function (store, data) {
         var records = _.map(data, function (record) {
             return Ext.apply({
-                Bang: (record.get('c_BusinessValue') / record.get('PlanEstimate')).toFixed(2)
+                Bang: (record.get(MyApp.App.BUSINESS_VALUE_PROPERTY) / record.get('PlanEstimate')).toFixed(2)
             }, record.getData());
         });
 
@@ -109,7 +114,7 @@ Ext.define('MyApp.App', {
                 },
                 {
                     text: 'Business Value',
-                    dataIndex: 'c_BusinessValue'
+                    dataIndex: MyApp.App.BUSINESS_VALUE_PROPERTY
                 },
                 {
                     text: 'Plan Estimate',
@@ -141,11 +146,11 @@ Ext.define('MyApp.App', {
                     value: '0'
                 }
             ],
-            fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', MyApp.App.BUSINESS_VALUE_PROPERTY]
         });
     },
         
-    _onBoardDataLoaded: function(store, data) { 
+    _onBoardDataLoaded: function(store, data) {
         var valueAttributes = _.map(data, function(record) { return record.get(this.attributeName); }, this);
         var uniqueValues = _.uniq(valueAttributes);
         var uniqueValuesNoNull = _.filter(uniqueValues, function(value) { return value != null; });
@@ -154,7 +159,6 @@ Ext.define('MyApp.App', {
         
         var estimateValues = _.sortBy(unorderedColumns, function(num) { return num; });
         
-    
         var columns = [
             {
                 value: null,
@@ -163,7 +167,6 @@ Ext.define('MyApp.App', {
                 }
             }
         ];
-
 
         _.each(estimateValues, function (estimate) {
             columns.push({
@@ -174,33 +177,44 @@ Ext.define('MyApp.App', {
             });
         });
 
-        this.board = this.add({
-            xtype: 'rallycardboard',
-            types: ['User Story'],
-            attribute: this.attributeName,
-            context: this.getContext(),
-            margin: '10 0 0 0',
-            columnConfig: {
-                columnHeaderConfig: {
-                    headerTpl: '{value}'
-                }
-            },
-            storeConfig: {
-                filters: [
-                    {
-                        property: 'Iteration',
-                        operator: '=',
-                        value: ''
-                    },
-                    {
-                        property: 'DirectChildrenCount',
-                        operator: '=',
-                        value: '0'
+        if(this.attributeName === MyApp.App.BUSINESS_VALUE_PROPERTY && !this._supportsBusinessValue(data)){
+            this.board = this.add({
+                xtype:'boarderrormessage',
+                businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY
+            });
+        }
+        else {
+            this.board = this.add({
+                xtype: 'rallycardboard',
+                types: ['User Story'],
+                attribute: this.attributeName,
+                context: this.getContext(),
+                margin: '10 0 0 0',
+                columnConfig: {
+                    columnHeaderConfig: {
+                        headerTpl: '{value}'
                     }
-                ]
-            },
+                },
+                storeConfig: {
+                    filters: [
+                        {
+                            property: 'Iteration',
+                            operator: '=',
+                            value: ''
+                        },
+                        {
+                            property: 'DirectChildrenCount',
+                            operator: '=',
+                            value: '0'
+                        }
+                    ]
+                },
 
-            columns: columns
-        });
+                columns: columns
+            });
+        }
+    },
+    _supportsBusinessValue: function(data){
+        return data.length > 0 && _.has(data[0].data, MyApp.App.BUSINESS_VALUE_PROPERTY);
     }
 });
