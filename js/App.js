@@ -1,7 +1,10 @@
 Ext.define('MyApp.App', {
-    requires: ['MyApp.Toggle'],
+    requires: ['MyApp.Toggle', 'MyApp.BoardErrorMessage'],
     extend: 'Rally.app.App',
     componentCls: 'app',
+    statics: {
+        BUSINESS_VALUE_PROPERTY: 'awefaefawef'
+    },
     items: [
     ],
     padding: '20 20 20 20',
@@ -12,11 +15,13 @@ Ext.define('MyApp.App', {
         this._addBoard();
     },
     _addToggle: function () {
-        var container = this.add({xtype: 'container',
+        var container = this.add({
+            xtype: 'container',
             layout: {type: 'hbox', pack: 'end'},
             items: [
                 {
                     xtype: 'customtoggle',
+                    businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY,
                     listeners: {
                         toggle: {fn: this._boardToggled, scope: this}
                     },
@@ -28,6 +33,7 @@ Ext.define('MyApp.App', {
     _boardToggled: function (sender, attribute) {
         this.remove(this.board);
         this.remove(this.grid);
+        this.remove(this.message);
         this.attributeName = attribute;
         
         if(this.attributeName != 'Ranking') {
@@ -44,6 +50,7 @@ Ext.define('MyApp.App', {
     
     _addRankingGrid: function() {
         this.header.update({img: 'img/bang.jpg', text: 'Story Value per Cost'});
+
         Ext.create('Rally.data.wsapi.Store', {
             model: 'userstory',
             autoLoad: true,
@@ -58,7 +65,7 @@ Ext.define('MyApp.App', {
                     value: null
                 },
                 {
-                    property: 'c_BusinessValue',
+                    property: MyApp.App.BUSINESS_VALUE_PROPERTY,
                     operator: '!=',
                     value: null
                 },
@@ -68,14 +75,22 @@ Ext.define('MyApp.App', {
                     value: '0'
                 }
             ],
-            fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', MyApp.App.BUSINESS_VALUE_PROPERTY]
         });
     },
 
     _onGridDataLoaded: function (store, data) {
+        if(!this._supportsBusinessValue(data)){
+            this.message = this.add({
+                xtype:'boarderrormessage',
+                businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY
+            });
+            return;
+        }
+
         var records = _.map(data, function (record) {
             return Ext.apply({
-                Bang: (record.get('c_BusinessValue') / record.get('PlanEstimate')).toFixed(2)
+                Bang: (record.get(MyApp.App.BUSINESS_VALUE_PROPERTY) / record.get('PlanEstimate')).toFixed(2)
             }, record.getData());
         });
 
@@ -109,7 +124,7 @@ Ext.define('MyApp.App', {
                 },
                 {
                     text: 'Business Value',
-                    dataIndex: 'c_BusinessValue'
+                    dataIndex: MyApp.App.BUSINESS_VALUE_PROPERTY
                 },
                 {
                     text: 'Plan Estimate',
@@ -142,7 +157,7 @@ Ext.define('MyApp.App', {
                     value: '0'
                 }
             ],
-            fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', MyApp.App.BUSINESS_VALUE_PROPERTY]
         });
     },
     
@@ -187,7 +202,14 @@ Ext.define('MyApp.App', {
             });
         });
 
-        this.board = this.add({
+        if(!this._supportsBusinessValue(data) && this.attributeName === MyApp.App.BUSINESS_VALUE_PROPERTY){
+            this.message = this.add({
+                xtype:'boarderrormessage',
+                businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY
+            });
+        }
+        else {
+             this.board = this.add({
             xtype: 'rallycardboard',
             types: ['User Story'],
             attribute: this.attributeName,
@@ -214,5 +236,16 @@ Ext.define('MyApp.App', {
             },
             columns: columns
         });
+
+        }
+    },
+    _supportsBusinessValue: function(data){
+        if(_.isUndefined(this.valueUnsupported)){
+            return this.valueUnsupported;
+        }
+        else{
+            this.valueUnsupported = data.length > 0 && _.has(data[0].data, MyApp.App.BUSINESS_VALUE_PROPERTY);
+            return this.valueUnsupported;
+        }
     }
 });
