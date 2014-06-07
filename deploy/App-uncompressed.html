@@ -1,4 +1,130 @@
-Ext.define('MyApp.App', {
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BangForBuck</title>
+
+    <script type="text/javascript" src="/apps/2.0rc3/sdk.js"></script>
+
+    <script type="text/javascript">
+        Rally.onReady(function () {
+                (function () {
+    var Ext = window.Ext4 || window.Ext;
+
+    Ext.define('MyApp.Toggle', {
+        requires:['Rally.ui.Button'],
+        extend:'Ext.Container',
+        alias:'widget.customtoggle',
+        config: {
+            businessValueProperty: ''
+        },
+        componentCls: '',
+        layout: 'hbox',
+        border: 1,
+        activeButtonCls: 'active hide-tooltip',
+
+        toggleState: 'PlanEstimate',
+
+        defaultType: 'rallybutton',
+        initComponent: function() {
+            this.callParent(arguments);
+
+            this.add([
+                {
+                    cls: 'toggle left',
+                    itemId: 'PlanEstimate',
+                    text: 'Plan Estimate',
+                    frame: false,
+                    toolTipConfig: {
+                        html: 'Switch to Plan Estimates',
+                        anchor: 'bottom',
+                        hideDelay: 0
+                    },
+                    width: 200
+                },
+                {
+                    cls: 'toggle center',
+                    itemId: this.getBusinessValueProperty(),
+                    text: 'Business Value',
+                    frame: false,
+                    toolTipConfig: {
+                        html: 'Switch to Business Value',
+                        anchor: 'bottom',
+                        hideDelay: 0
+                    },
+                    width: 200
+                },
+                {
+                    cls: 'toggle right',
+                    itemId: 'Ranking',
+                    text: 'Ranking',
+                    frame: false,
+                    toolTipConfig: {
+                        html: 'Switch to Ranking',
+                        anchor: 'bottom',
+                        hideDelay: 0
+                    },
+                    width: 200
+                }
+            ]);
+
+            this.addEvents([
+                /**
+                 * @event toggle
+                 * Fires when the toggle value is changed.
+                 * @param {String} toggleState 'c_BusinessValue' or 'PlanEstimate'.
+                 */
+                'toggle'
+            ]);
+
+            this.items.each(function(item) {
+                this.mon(item, 'click', this._onButtonClick, this);
+            }, this);
+
+            this.down('#' + this.toggleState).addCls(this.activeButtonCls);
+        },
+
+        _onButtonClick: function(btn) {
+            var btnId = btn.getItemId();
+            if (btnId !== this.toggleState) {
+                this.toggleState = btnId;
+
+                this.items.each(function(item) {
+                    if (item === btn) {
+                        if (!item.hasCls(this.activeButtonCls.split(' ')[0])) {
+                            item.addCls(this.activeButtonCls);
+                        }
+                    } else {
+                        item.removeCls(this.activeButtonCls);
+                    }
+                }, this);
+
+                this.fireEvent('toggle', this, this.toggleState);
+            }
+        }
+    });
+})();
+
+
+                (function () {
+    var Ext = window.Ext4 || window.Ext;
+
+    Ext.define('MyApp.BoardErrorMessage', {
+        extend:'Ext.Component',
+        alias:'widget.boarderrormessage',
+        config: {
+            businessValueProperty: ''
+        },
+        initComponent: function(){
+            this.callParent(arguments);
+            this.renderData = {property: this.getBusinessValueProperty()};
+        },
+        renderTpl: '<p style="font-size:1.2em">Your subscription looks like it\'s missing {property}. Contact' +
+            ' your subscription admin to add {property} to User Story.</p>'
+    });
+})();
+
+
+                Ext.define('MyApp.App', {
     requires: ['MyApp.Toggle', 'MyApp.BoardErrorMessage'],
     extend: 'Rally.app.App',
     componentCls: 'app',
@@ -363,3 +489,124 @@ Ext.define('MyApp.App', {
         }
     }
 });
+
+
+            Rally.launchApp('MyApp.App', {
+                name:"BangForBuck",
+	            parentRepos:""
+            });
+
+        });
+    </script>
+
+
+    <style type="text/css">
+        /* line 17, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 5, ../sass/app.scss */
+.app .x-btn-default-small .x-btn-inner {
+  color: black;
+  line-height: 14px;
+}
+/* line 12, ../sass/app.scss */
+.app .active.x-btn-default-small .x-btn-inner {
+  color: white;
+}
+/* line 17, ../sass/app.scss */
+.app .x-btn.toggle.center {
+  border: solid 1px silver !important;
+}
+/* line 21, ../sass/app.scss */
+.app h1 {
+  font-size: 3em;
+  line-height: 55px;
+  display: inline-block;
+}
+/* line 27, ../sass/app.scss */
+.app .headerContainer {
+  text-align: center;
+}
+/* line 31, ../sass/app.scss */
+.app .huge {
+  font-size: 4em;
+}
+/* line 35, ../sass/app.scss */
+.app .very-big {
+  font-size: 3em;
+}
+/* line 39, ../sass/app.scss */
+.app .big {
+  font-size: 2em;
+}
+/* line 43, ../sass/app.scss */
+.app .small {
+  color: gray;
+}
+
+    </style>
+</head>
+<body></body>
+</html>

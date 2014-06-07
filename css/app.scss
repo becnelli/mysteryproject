@@ -1,0 +1,45 @@
+.app {
+  .x-btn-default-small {
+    .x-btn-inner {
+      color: black;
+      line-height: 14px;
+    }
+  }
+
+  .active.x-btn-default-small {
+    .x-btn-inner {
+      color: white;
+    }
+  }
+
+  .x-btn.toggle.center {
+    border: solid 1px silver !important;
+  }
+
+  h1 {
+    font-size: 3em;
+    line-height: 55px;
+    display:inline-block;
+  }
+
+  .headerContainer {
+     text-align: center;
+  }
+
+  .huge {
+    font-size: 4em;
+  }
+
+  .very-big {
+    font-size: 3em;
+  }
+
+  .big {
+    font-size: 2em;
+  }
+
+  .small {
+    color: gray;
+  }
+}
+

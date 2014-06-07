@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BangForBuck</title>
+
+    <script type="text/javascript" src="/apps/2.0rc3/sdk.js"></script>
+
+    <script type="text/javascript">
+        Rally.onReady(function () {
+                (function(){var Ext=window.Ext4||window.Ext;Ext.define("MyApp.Toggle",{requires:["Rally.ui.Button"],extend:"Ext.Container",alias:"widget.customtoggle",config:{businessValueProperty:""},componentCls:"",layout:"hbox",border:1,activeButtonCls:"active hide-tooltip",toggleState:"PlanEstimate",defaultType:"rallybutton",initComponent:function(){this.callParent(arguments),this.add([{cls:"toggle left",itemId:"PlanEstimate",text:"Plan Estimate",frame:!1,toolTipConfig:{html:"Switch to Plan Estimates",anchor:"bottom",hideDelay:0},width:200},{cls:"toggle center",itemId:this.getBusinessValueProperty(),text:"Business Value",frame:!1,toolTipConfig:{html:"Switch to Business Value",anchor:"bottom",hideDelay:0},width:200},{cls:"toggle right",itemId:"Ranking",text:"Ranking",frame:!1,toolTipConfig:{html:"Switch to Ranking",anchor:"bottom",hideDelay:0},width:200}]),this.addEvents(["toggle"]),this.items.each(function(item){this.mon(item,"click",this._onButtonClick,this)},this),this.down("#"+this.toggleState).addCls(this.activeButtonCls)},_onButtonClick:function(btn){var btnId=btn.getItemId();btnId!==this.toggleState&&(this.toggleState=btnId,this.items.each(function(item){item===btn?item.hasCls(this.activeButtonCls.split(" ")[0])||item.addCls(this.activeButtonCls):item.removeCls(this.activeButtonCls)},this),this.fireEvent("toggle",this,this.toggleState))}})})();
+                (function(){var Ext=window.Ext4||window.Ext;Ext.define("MyApp.BoardErrorMessage",{extend:"Ext.Component",alias:"widget.boarderrormessage",config:{businessValueProperty:""},initComponent:function(){this.callParent(arguments),this.renderData={property:this.getBusinessValueProperty()}},renderTpl:'<p style="font-size:1.2em">Your subscription looks like it\'s missing {property}. Contact your subscription admin to add {property} to User Story.</p>'})})();
+                Ext.define("MyApp.App",{requires:["MyApp.Toggle","MyApp.BoardErrorMessage"],extend:"Rally.app.App",componentCls:"app",statics:{BUSINESS_VALUE_PROPERTY:"c_BusinessValue"},items:[],padding:"20 20 20 20",launch:function(){this.attributeName="PlanEstimate",this._addHeader(),this._addToggle(),this._addIterationFilter(),this._addBangButton(),this._addBoard()},_addToggle:function(){var container=this.add({xtype:"container",layout:{type:"hbox",pack:"end"},items:[{xtype:"customtoggle",businessValueProperty:MyApp.App.BUSINESS_VALUE_PROPERTY,listeners:{toggle:{fn:this._boardToggled,scope:this}},margin:"0 0 10 0"}]})},_addBangButton:function(){this.bangButtonContainer=this.add({xtype:"container",layout:{type:"hbox"},items:[{xtype:"rallybutton",text:"Rank Stories By Bang",handler:this._rankByBang,margin:"0 0 10 0",cls:"primary medium",scope:this}]}),this.bangButtonContainer.hide()},_addIterationFilter:function(){this.iterationFilterContainer=this.add({xtype:"container",layout:{type:"hbox"},items:[{xtype:"rallyiterationcombobox",fieldLabel:"Filter by Iteratoin:",allowNoEntry:!0,listeners:{select:this._onIterationSelect,scope:this}}]})},_getIterationFilter:function(){var iterationCombo=this.down("rallyiterationcombobox");return null===iterationCombo||0===iterationCombo.valueModels.length?"":iterationCombo.getValue()},_onIterationSelect:function(){this._boardToggled(null,this.attributeName)},_rankByBang:function(){this.storyToRankMap={},this.sortedData=_.sortBy(this.gridData,"Bang"),this.iRank=0,this._rankRelative()},_rankRelative:function(){if(this.iRank<this.sortedData.length-1){var i=this.iRank;this.iRank++,Rally.data.Ranker.rankRelative({recordToRank:this.wsapiMap[this.sortedData[i+1].ObjectID],relativeRecord:this.wsapiMap[this.sortedData[i].ObjectID],position:"before",notificationMessage:"Stories ranked by bang!",saveOptions:{callback:this._rankRelative,scope:this}})}},_boardToggled:function(sender,attribute){this.remove(this.board),this.remove(this.grid),this.remove(this.message),this.bangButtonContainer.hide(),this.attributeName=attribute,"Ranking"!=this.attributeName?this._addBoard():this._addRankingGrid()},_addHeader:function(){this.header=this.add({xtype:"component",tpl:'<div class="headerContainer"><tpl if="img"><img src={img} width="40" height="40" style="margin-right: 1em"/></tpl><h1>{text}</h1></div>',data:{text:"HEADER"},margin:"10 0 10 0"})},_addRankingGrid:function(){this.bangButtonContainer.show(),this.header.update({img:"img/bang.jpg",text:"Value vs. Cost"}),Ext.create("Rally.data.wsapi.Store",{model:"userstory",autoLoad:!0,listeners:{load:this._onGridDataLoaded,scope:this},filters:[{property:"Iteration",operator:"=",value:this._getIterationFilter()},{property:"PlanEstimate",operator:"!=",value:null},{property:MyApp.App.BUSINESS_VALUE_PROPERTY,operator:"!=",value:null},{property:"DirectChildrenCount",operator:"=",value:"0"}],fetch:["FormattedID","Name","PlanEstimate",MyApp.App.BUSINESS_VALUE_PROPERTY,"DragAndDropRank"]})},_onGridDataLoaded:function(store,data){return this._supportsBusinessValue(data)?(this.wsapiMap={},this.gridData=_.map(data,function(record){return this.wsapiMap[record.get("ObjectID")]=record,Ext.apply({Bang:(record.get(MyApp.App.BUSINESS_VALUE_PROPERTY)/record.get("PlanEstimate")).toFixed(2)},record.getData())},this),this.grid=this.add({xtype:"rallygrid",showPagingToolbar:!1,showRowActionsColumn:!1,editable:!1,store:Ext.create("Rally.data.custom.Store",{data:this.gridData,sorters:[{property:"Bang",direction:"DESC"}]}),columnCfgs:[{xtype:"templatecolumn",text:"ID",dataIndex:"FormattedID",width:100,tpl:Ext.create("Rally.ui.renderer.template.FormattedIDTemplate")},{text:"Bang",dataIndex:"Bang",width:130,renderer:function(value){var em="normal";return value>=4?em="huge":value>=3?em="very-big":value>=2?em="big":1>value&&(em="small"),"<span class='"+em+"'>"+value+"</span>"}},{text:"Name",dataIndex:"Name",flex:1},{text:"Business Value",dataIndex:MyApp.App.BUSINESS_VALUE_PROPERTY},{text:"Plan Estimate",dataIndex:"PlanEstimate"}]}),void 0):(this.message=this.add({xtype:"boarderrormessage",businessValueProperty:MyApp.App.BUSINESS_VALUE_PROPERTY}),void 0)},_addBoard:function(){var text="PlanEstimate"===this.attributeName?"Plan Estimate":"Business Value";this.header.update({text:text}),Ext.create("Rally.data.wsapi.Store",{model:"userstory",autoLoad:!0,listeners:{load:this._onBoardDataLoaded,scope:this},filters:[{property:"Iteration",operator:"=",value:this._getIterationFilter()},{property:"DirectChildrenCount",operator:"=",value:"0"}],fetch:["FormattedID","Name","PlanEstimate",MyApp.App.BUSINESS_VALUE_PROPERTY]})},_onBoardDataLoaded:function(store,data){var definedColumns=[1,2,3,5,8,13,20],valueAttributes=_.map(data,function(record){return record.get(this.attributeName)},this),uniqueValues=_.uniq(valueAttributes),uniqueValuesNoNull=_.filter(uniqueValues,function(value){return null!==value}),unorderedColumns=_.union(definedColumns,uniqueValuesNoNull),estimateValues=_.sortBy(unorderedColumns,function(num){return num}),columns=[{value:null,columnHeaderConfig:{headerData:{value:"Unestimated"}}}];_.each(estimateValues,function(estimate){var borderValue=0;_.contains(definedColumns,estimate)||(borderValue=1),columns.push({value:estimate,columnHeaderConfig:{headerData:{value:estimate}},border:borderValue,style:{borderColor:"red",borderStyle:"solid"}})}),this._supportsBusinessValue(data)||this.attributeName!==MyApp.App.BUSINESS_VALUE_PROPERTY?this.board=this.add({xtype:"rallycardboard",types:["User Story"],attribute:this.attributeName,context:this.getContext(),margin:"10 0 0 0",columnConfig:{columnHeaderConfig:{headerTpl:"{value}"}},storeConfig:{filters:[{property:"Iteration",operator:"=",value:this._getIterationFilter()},{property:"DirectChildrenCount",operator:"=",value:"0"}]},columns:columns}):this.message=this.add({xtype:"boarderrormessage",businessValueProperty:MyApp.App.BUSINESS_VALUE_PROPERTY})},_supportsBusinessValue:function(data){return _.isUndefined(this.valueUnsupported)?(this.valueUnsupported=null!==data&&data.length>0&&_.has(data[0].data,MyApp.App.BUSINESS_VALUE_PROPERTY),this.valueUnsupported):this.valueUnsupported}});
+
+            Rally.launchApp('MyApp.App', {
+                name:"BangForBuck",
+	            parentRepos:""
+            });
+
+        });
+    </script>
+
+
+    <style type="text/css">
+        /* line 17, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../.rvm/gems/ruby-2.0.0-p247/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 5, ../sass/app.scss */
+.app .x-btn-default-small .x-btn-inner {
+  color: black;
+  line-height: 14px;
+}
+/* line 12, ../sass/app.scss */
+.app .active.x-btn-default-small .x-btn-inner {
+  color: white;
+}
+/* line 17, ../sass/app.scss */
+.app .x-btn.toggle.center {
+  border: solid 1px silver !important;
+}
+/* line 21, ../sass/app.scss */
+.app h1 {
+  font-size: 3em;
+  line-height: 55px;
+  display: inline-block;
+}
+/* line 27, ../sass/app.scss */
+.app .headerContainer {
+  text-align: center;
+}
+/* line 31, ../sass/app.scss */
+.app .huge {
+  font-size: 4em;
+}
+/* line 35, ../sass/app.scss */
+.app .very-big {
+  font-size: 3em;
+}
+/* line 39, ../sass/app.scss */
+.app .big {
+  font-size: 2em;
+}
+/* line 43, ../sass/app.scss */
+.app .small {
+  color: gray;
+}
+
+    </style>
+</head>
+<body></body>
+</html>

@@ -1,12 +1,14 @@
 {
-    "name": "LookbackApp",
-    "className": "CustomApp",
-    "sdk": "2.0p",
-    "javascript": [
-        "js/App.js",
-        "js/Toggle.js"
-    ],
-    "css": [
-        "stylesheets/app.css"
-    ]
+   "name": "BangForBuck",
+   "className": "MyApp.App",
+   "server": "https://rally1.rallydev.com",
+   "sdk": "2.0rc3",
+   "javascript": [
+      "js/Toggle.js",
+      "js/BoardErrorMessage.js",
+      "js/App.js"
+   ],
+   "css": [
+      "css/app.css"
+   ]
 }

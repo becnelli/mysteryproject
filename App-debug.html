@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mystery app</title>
+    <title>BangForBuck</title>
 
-      <script type="text/javascript" src="https://rally1.rallydev.com/apps/2.0rc3/sdk-debug.js"></script>
- 
+
+    <script type="text/javascript" src="https://rally1.rallydev.com/apps/2.0rc3/sdk-debug.js"></script>
+
     <script type="text/javascript">
-
-Ext.Loader.setPath('MyApp', 'js');    
-
-        Rally.onReady(function() {
-            Rally.loadScripts([
-                "js/App.js"
-            ], function() {
-                Rally.launchApp('MyApp.App', {
-                })
+        // I am keeping the extra , in there to simplify my code. If someone is actually using an old version of IE to make an app let me know.
+        Rally.loadScripts(
+                [
+                      "js/Toggle.js",
+                      "js/BoardErrorMessage.js",
+                      "js/App.js",
+                ],
+        function() {
+            Rally.launchApp('MyApp.App', {
+                name:"BangForBuck"
             });
-        });
+        }, true);
     </script>
 
-<link rel="stylesheet" type="text/css" href="stylesheets/app.css">
+    <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body></body>
 </html>
