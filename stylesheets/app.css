@@ -78,4 +78,5 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /* line 20, ../sass/app.scss */
 .app h1 {
   font-size: 3em;
+  text-align: center;
 }

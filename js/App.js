@@ -8,18 +8,24 @@ Ext.define('MyApp.App', {
     padding: '20 20 20 20',
     
     launch: function() {
-        this._addToggle();
         this._addHeader();
+        this._addToggle();
         this._addBoard('PlanEstimate');
     },
     
     _addToggle: function(){
-        this.add({
-            xtype: 'customtoggle',
-            listeners: {
-                toggle: {fn: this._boardToggled, scope: this}
-            }
-        });
+        var container = this.add({xtype: 'container',
+            layout: {type:'hbox', pack:'end'},
+            items:[
+                {
+                    xtype: 'customtoggle',
+                    listeners: {
+                        toggle: {fn: this._boardToggled, scope: this}
+                    },  
+                    margin: '0 0 10 0'
+                }
+              ]
+            });
     },
     
     _boardToggled: function(sender, attribute){
