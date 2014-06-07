@@ -79,4 +79,5 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 .app h1 {
   font-size: 3em;
   text-align: center;
+  line-height: 40px;
 }
