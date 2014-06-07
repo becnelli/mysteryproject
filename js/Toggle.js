@@ -29,7 +29,7 @@
             },
             {
                 cls: 'toggle center',
-                itemId: 'BusinessValue',
+                itemId: 'c_BusinessValue',
                 text: 'Business Value',
                 frame: false,
                 toolTipConfig: {
@@ -60,7 +60,7 @@
                 /**
                  * @event toggle
                  * Fires when the toggle value is changed.
-                 * @param {String} toggleState 'BusinessValue' or 'PlanEstimate'.
+                 * @param {String} toggleState 'c_BusinessValue' or 'PlanEstimate'.
                  */
                 'toggle'
             ]);

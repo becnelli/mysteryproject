@@ -10,7 +10,8 @@ Ext.define('MyApp.App', {
     launch: function() {
         this._addHeader();
         this._addToggle();
-        this._addBoard('PlanEstimate');
+        this.attributeName = 'PlanEstimate';
+        this._addBoard();
     },
     
     _addToggle: function(){
@@ -31,9 +32,10 @@ Ext.define('MyApp.App', {
     _boardToggled: function(sender, attribute){
         this.remove(this.board);
         this.remove(this.grid);
+        this.attributeName = attribute;
         
-        if(attribute != 'Ranking') {
-            this._addBoard(attribute);
+        if(this.attributeName != 'Ranking') {
+            this._addBoard();
         }
         else {
             this._addRankingGrid();
@@ -41,11 +43,11 @@ Ext.define('MyApp.App', {
     },
     
     _addHeader: function(){
-        this.header = this.add({xtype: 'component', tpl: '<h1>{text}</h1>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
+        this.header = this.add({xtype: 'component', tpl: '<img src="{imgSrc}" height="40"/><h1>{text}</h1>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
     },
     
     _addRankingGrid: function() {
-        this.header.update({text: 'Story Value per Cost <img src="img/bang.jpg" height="40"/>'});
+        this.header.update({imgSrc: 'img/bang.jpg', text: 'Story Value per Cost'});
         Ext.create('Rally.data.wsapi.Store', {
             model: 'userstory',
             autoLoad: true,
@@ -119,10 +121,35 @@ Ext.define('MyApp.App', {
         });
     },
     
-    
-    _addBoard: function(attribute) {
-        var text = attribute === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stores";
+    _addBoard: function() {
+        var text = this.attributeName === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stories";
         this.header.update({text: text});
+        
+        Ext.create('Rally.data.wsapi.Store', {
+            model: 'userstory',
+            autoLoad: true,
+            listeners: {
+                load: this._onBoardDataLoaded,
+                scope: this
+            },
+            filters: [
+                {
+                    property: 'Iteration',
+                    operator: '=',
+                    value: ''
+                },
+                {
+                    property: 'DirectChildrenCount',
+                    operator: '=',
+                    value: '0'
+                }
+            ],
+            fetch: ['FormattedID', 'Name', 'PlanEstimate', 'c_BusinessValue']
+        });
+    },
+        
+    _onBoardDataLoaded: function(store, data) {
+    
         var columns = [
             {
                 value: null,
@@ -146,7 +173,7 @@ Ext.define('MyApp.App', {
         this.board = this.add({
             xtype: 'rallycardboard',
             types: ['User Story'],
-            attribute: attribute,
+            attribute: this.attributeName,
             context: this.getContext(),
             margin: '10 0 0 0',
             listeners: {
