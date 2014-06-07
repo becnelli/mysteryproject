@@ -84,7 +84,7 @@ Ext.define('MyApp.App', {
         this.remove(this.message);
         this.bangButtonContainer.hide();
         this.attributeName = attribute;
-        
+
         if(this.attributeName != 'Ranking') {
             this._addBoard();
         }
@@ -96,7 +96,7 @@ Ext.define('MyApp.App', {
     _addHeader: function () {
         this.header = this.add({xtype: 'component', tpl: '<div class="headerContainer"><tpl if="img"><img src={img} width="40" height="40"/></tpl><h1>{text}</h1></div>', data: {text: 'HEADER'}, margin: '10 0 10 0'});
     },
-    
+
     _addRankingGrid: function() {
         this.bangButtonContainer.show();
         this.header.update({img: 'img/bang.jpg', text: 'Story Value per Cost'});
@@ -130,6 +130,14 @@ Ext.define('MyApp.App', {
     },
 
     _onGridDataLoaded: function (store, data) {
+        if(!this._supportsBusinessValue(data)){
+            this.message = this.add({
+                xtype:'boarderrormessage',
+                businessValueProperty: MyApp.App.BUSINESS_VALUE_PROPERTY
+            });
+            return;
+        }
+        
         this.wsapiMap = {};
         
         this.gridData = _.map(data, function (record) {
@@ -160,7 +168,25 @@ Ext.define('MyApp.App', {
                 },
                 {
                     text: 'Bang',
-                    dataIndex: 'Bang'
+                    dataIndex: 'Bang',
+                    width: 130,
+                    renderer: function(value){
+                        var em = "normal";
+                        if(value >= 4){
+                            em = "huge";
+                        }
+                        else if(value >= 3){
+                            em = "very-big";
+                        }
+                        else if(value >= 2){
+                            em = "big";
+                        }
+                        else if(value < 1 ){
+                            em = "small";
+                        }
+
+                        return "<span class='" + em + "'>" + value + "</span>";
+                    }
                 },
                 {
                     text: 'Name',
@@ -178,11 +204,11 @@ Ext.define('MyApp.App', {
             ]
         });
     },
-    
+
     _addBoard: function () {
         var text = this.attributeName === 'PlanEstimate' ? "Plan Estimate for Stories" : "Business Value for Stories";
         this.header.update({text: text});
-        
+
         Ext.create('Rally.data.wsapi.Store', {
             model: 'userstory',
             autoLoad: true,
@@ -210,13 +236,13 @@ Ext.define('MyApp.App', {
         var definedColumns = [1, 2, 3, 5, 8, 13, 20];
         
         var valueAttributes = _.map(data, function(record) { return record.get(this.attributeName); }, this);
-        
+
         var uniqueValues = _.uniq(valueAttributes);
-        
+
         var uniqueValuesNoNull = _.filter(uniqueValues, function(value) { return value != null; });
-        
+
         var unorderedColumns = _.union(definedColumns, uniqueValuesNoNull);
-        
+
         var estimateValues = _.sortBy(unorderedColumns, function(num) { return num; });
 
         var columns = [
@@ -233,12 +259,12 @@ Ext.define('MyApp.App', {
             if(!_.contains(definedColumns, estimate)){
                 borderValue = 1;
             }
-            
+
             columns.push({
                 value: estimate,
                 columnHeaderConfig: {
                     headerData: {value: estimate}
-                }, 
+                },
                 border: borderValue,
                 style: {
                     borderColor: 'red',
@@ -254,36 +280,37 @@ Ext.define('MyApp.App', {
             });
         }
         else {
-             this.board = this.add({
-            xtype: 'rallycardboard',
-            types: ['User Story'],
-            attribute: this.attributeName,
-            context: this.getContext(),
-            margin: '10 0 0 0',
-            columnConfig: {
-                columnHeaderConfig: {
-                        headerTpl: '{value}'
-                }
-            },
-            storeConfig: {
-                filters: [
-                    {
-                        property: 'Iteration',
-                        operator: '=',
-                        value: ''
-                    },
-                    {
-                        property: 'DirectChildrenCount',
-                        operator: '=',
-                        value: '0'
+            this.board = this.add({
+                xtype: 'rallycardboard',
+                types: ['User Story'],
+                attribute: this.attributeName,
+                context: this.getContext(),
+                margin: '10 0 0 0',
+                columnConfig: {
+                    columnHeaderConfig: {
+                            headerTpl: '{value}'
                     }
-                ]
-            },
-            columns: columns
-        });
+                },
+                storeConfig: {
+                    filters: [
+                        {
+                            property: 'Iteration',
+                            operator: '=',
+                            value: ''
+                        },
+                        {
+                            property: 'DirectChildrenCount',
+                            operator: '=',
+                            value: '0'
+                        }
+                    ]
+                },
+                columns: columns
+            });
 
         }
     },
+    
     _supportsBusinessValue: function(data){
         if(!_.isUndefined(this.valueUnsupported)){
             return this.valueUnsupported;

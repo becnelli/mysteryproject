@@ -86,3 +86,19 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 .app .headerContainer {
   text-align: center;
 }
+/* line 31, ../sass/app.scss */
+.app .huge {
+  font-size: 4em;
+}
+/* line 35, ../sass/app.scss */
+.app .very-big {
+  font-size: 3em;
+}
+/* line 39, ../sass/app.scss */
+.app .big {
+  font-size: 2em;
+}
+/* line 43, ../sass/app.scss */
+.app .small {
+  color: gray;
+}
