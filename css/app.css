@@ -82,10 +82,6 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   line-height: 55px;
   display: inline-block;
 }
-/* line 27, ../sass/app.scss */
-.app .headerContainer {
-  text-align: center;
-}
 /* line 31, ../sass/app.scss */
 .app .huge {
   font-size: 4em;
