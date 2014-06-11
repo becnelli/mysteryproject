@@ -13,8 +13,6 @@ Ext.define('MyApp.App', {
         this._addHeader();
         this._addToggle();
         this._addIterationFilter();
-        this._addBangButton();
-        this._addBoard();
     },
     
     _addToggle: function () {
@@ -49,12 +47,18 @@ Ext.define('MyApp.App', {
                     xtype: 'rallyiterationcombobox',
                     allowNoEntry: true,
                     listeners: {
-                        select: {fn: this._onIterationSelect, scope: this}
+                        select: {fn: this._onIterationSelect, scope: this},
+                        ready: { fn: this._onIterationFilterLoaded, scope: this}
                     }
                 }, 
                 this.pointsLabel
             ]
         });
+    },
+    
+    _onIterationFilterLoaded: function () {
+        this._addBangButton();
+        this._addBoard();
     },
     
     _addBangButton: function() {
@@ -85,8 +89,6 @@ Ext.define('MyApp.App', {
         {
             return iterationCombo.getValue();
         }
-        
-        
     },
     
     _onIterationSelect: function() {
